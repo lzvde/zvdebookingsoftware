@@ -1,0 +1,43 @@
+<!-- public/booking-widget.html -->
+<div class="p-4 max-w-sm bg-white rounded-xl shadow-md">
+  <h2 class="text-xl font-bold mb-2">Book a Time</h2>
+  <form id="bookingForm">
+    <input type="text" name="name" placeholder="Your Name" required class="w-full mb-2 p-2 border rounded" />
+    <input type="email" name="email" placeholder="Email" required class="w-full mb-2 p-2 border rounded" />
+    <input type="text" name="service" placeholder="Service (e.g., Coaching)" class="w-full mb-2 p-2 border rounded" />
+    <input type="date" name="date" required class="w-full mb-2 p-2 border rounded" />
+    <input type="time" name="time" required class="w-full mb-2 p-2 border rounded" />
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Book</button>
+  </form>
+  <p id="successMessage" class="text-green-600 mt-2 hidden">Booking successful!</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  const supabase = supabase.createClient(
+    'https://zokzwwtntqmvinbmfryj.supabase.co', 
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpva3p3d3RudHFtdmluYm1mcnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1Njc0NzIsImV4cCI6MjA2MzE0MzQ3Mn0.Tm2aLtSA2xApZ_X0oQGEh0eqbH6oU0O2qLoo9NQeVL0'
+  );
+
+  const form = document.getElementById('bookingForm');
+  const successMsg = document.getElementById('successMessage');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      service: formData.get('service'),
+      date: formData.get('date'),
+      time: formData.get('time'),
+    };
+    const { error } = await supabase.from('bookings').insert(data);
+    if (!error) {
+      successMsg.classList.remove('hidden');
+      form.reset();
+    } else {
+      alert("Error submitting booking: " + error.message);
+    }
+  });
+</script>
